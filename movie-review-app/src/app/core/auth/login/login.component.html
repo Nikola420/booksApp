@@ -1,0 +1,25 @@
+<ion-content>
+  <div class="wrapper">
+    <div *ngIf="authService.getCurrentUser() | async as user; else showLogin">
+      <ion-card>
+        <ion-card-content>
+            <h1>Welcome {{ user.displayName }}!</h1>
+            <ion-icon name="happy" style="color: var(--ion-color-primary)" ></ion-icon>
+            <div style="display: flex; width: 100%; justify-content: space-evenly" >
+              <ion-button [href]="'/'" >Continue to app</ion-button>
+              <ion-button (click)="logout()" color="secondary" >Logout</ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+      <ng-template #showLogin>
+            <ion-card>
+              <ion-card-content>
+              <h1>Please login to continue.</h1>
+              <ion-icon name="hand-right-sharp" style="color: var(--ion-color-danger)" ></ion-icon>
+              <ion-button (click)="login()">Continue with Google</ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ng-template>  
+  </div>
+</ion-content>
