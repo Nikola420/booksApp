@@ -25,7 +25,7 @@ export class Tab2Page {
     public readonly authService: AuthService,
     private readonly afs: AngularFirestore
   ) {
-    this.reviewsRef = afs.collection<Review>('reviews', ref=>ref.orderBy('created', 'desc').limit(20));
+    this.reviewsRef = afs.collection<Review>('reviews', ref=>ref.orderBy('created', 'desc'));
     this.reviews = this.reviewsRef.valueChanges({idField: 'id'});
     this.authService.getCurrentUser()
     .pipe(take(1))

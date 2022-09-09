@@ -13,4 +13,6 @@
     </ion-toolbar>
   </ion-header>
 
+  <app-movie *ngFor="let movie of movies" [movieData]="movie" [mode]="'browse'" ></app-movie>
+
 </ion-content>

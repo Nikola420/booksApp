@@ -12,9 +12,7 @@
       <ion-title size="large">Browse latest reviews</ion-title>
     </ion-toolbar>
   </ion-header>
-
-  <ion-button (click)="createReview('ZEh14Qsjipta5Qnsa4jN','Pirates of the Caribbean: The Curse of the Black Pearl')" >New review</ion-button>
-
+  
   <div *ngIf="authService.getCurrentUser() | async as user" >
     <app-review 
       *ngFor="let review of reviews | async"

@@ -9,8 +9,8 @@ import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/comp
 import firebase from 'firebase/compat/app';
 
 // Types etc
-import { Observable, take } from 'rxjs';
-import { Review } from '../shared/models/review.model';
+import { Observable, take, of, map } from 'rxjs';
+import { Movie } from '../shared/models/movie.model';
 
 @Component({
   selector: 'app-tab3',
@@ -18,43 +18,58 @@ import { Review } from '../shared/models/review.model';
   styleUrls: ['tab3.page.scss']
 })
 export class Tab3Page {
-  reviewsRef: AngularFirestoreCollection<Review>;
-  reviews: Observable<any[]>;
+  moviesRef: AngularFirestoreCollection<Movie>;
+  movies: Observable<Movie>[];
+  watchlistRef: AngularFirestoreCollection<any>;
   currentUser: firebase.User;
   constructor(
     public readonly authService: AuthService,
-    private readonly afs: AngularFirestore
+    private readonly afs: AngularFirestore,
   ) {
-    this.reviewsRef = afs.collection<Review>('reviews', ref=>ref.orderBy('created', 'desc').limit(20));
-    this.reviews = this.reviewsRef.valueChanges({idField: 'id'});
+    this.moviesRef = afs.collection<Movie>('movies');
+    this.moviesRef.valueChanges({idField: 'id'})
+    .pipe(
+      map(doc=>doc.map(movie=>{
+        const {id, ...rest} = movie;
+        let temp = {id: id, ...rest};
+        return temp;
+      }))
+    )
+    .subscribe(
+      (movies)=>{
+        this.movies = [];
+        for(let movie of movies)
+          this.movies.push(of(movie));
+      }
+    );
     this.authService.getCurrentUser()
     .pipe(take(1))
     .subscribe(user=>this.currentUser=user);
   }
 
-  async createReview(movieId: string, movieName: string): Promise<void> {
-    const reviewData: Review = {
-      movieName: movieName,
-      movieRef: movieId,
-      ownerId: this.currentUser.uid,
-      owner: this.currentUser.displayName,
-      created: new Date(),
-      rated: 4,
-      text: "Dobar mali"
-    }
-    await this.reviewsRef.add(reviewData);
+  async addToWatchList(movieId: string, movieName: string): Promise<void> {
+    // const movieData: Movie = {
+    //   movieName: movieName,
+    //   movieRef: movieId,
+    //   ownerId: this.currentUser.uid,
+    //   owner: this.currentUser.displayName,
+    //   created: new Date(),
+    //   rated: 4,
+    //   text: "Dobar mali"
+    // }
+    // await this.moviesRef.add(movieData);
   }
 
-  async updateReview(id: string): Promise<void> {
-    const reviewData: Partial<Review> = {
-      text: "LOS MALI >:((((",
-      rated: 1
-    }
-    await this.reviewsRef.doc(id).update(reviewData);
+  async updatemovie(id: string): Promise<void> {
+    // const movieData: Partial<Movie> = {
+    //   text: "LOS MALI >:((((",
+    //   rated: 1
+    // }
+    // await this.moviesRef.doc(id).update(movieData);
   }
 
-  async deleteReview(id: string): Promise<void> {
-    await this.reviewsRef.doc(id).delete();
+  async deletemovie(id: string): Promise<void> {
+    await this.moviesRef.doc(id).delete();
   }
 
 }
