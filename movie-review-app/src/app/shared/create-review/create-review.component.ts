@@ -34,8 +34,7 @@ export class CreateReviewComponent implements OnInit {
       ]],
       text: ['', [
         Validators.required,
-        Validators.minLength(5),
-        Validators.maxLength(1000)
+        Validators.maxLength(10000)
       ]]
     });
    }
@@ -47,8 +46,8 @@ export class CreateReviewComponent implements OnInit {
     })
    }
 
-   submit(): void {
-    this.reviewsRef.add({
+   async submit(): Promise<void> {
+    await this.reviewsRef.add({
         movieName: this.movieName,
         movieRef: this.movieRef,
         created: new Date(),
@@ -56,6 +55,7 @@ export class CreateReviewComponent implements OnInit {
         ownerId: this.user.uid,
         ...this.reviewForm.value
       })
+    this.showing = false; 
    }
 
    rate(stars: number): void {

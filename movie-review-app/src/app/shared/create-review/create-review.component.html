@@ -11,10 +11,15 @@
       </div>
       <div>
         <h2>Review: </h2>
-        <textarea style="min-width: 20rem; min-height: 5rem;" formControlName="text" ></textarea>
+        <textarea
+          rows="5"
+          cols="50"
+          formControlName="text"
+          style="resize: none;"
+        ></textarea>
       </div>
       <div>
-        <ion-button type="submit" [disabled]="reviewForm.valid" >Publish</ion-button>
+        <ion-button type="submit" [disabled]="!reviewForm.valid" >Publish</ion-button>
         <ion-button type="button" color="danger" (click)="cancel()">Cancel</ion-button>
       </div>
     </form>

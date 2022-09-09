@@ -21,6 +21,7 @@ export class Tab3Page {
   moviesRef: AngularFirestoreCollection<Movie>;
   movies: Observable<Movie>[];
   currentUser: firebase.User;
+  visibleReviewIndex: number = -1;
   constructor(
     public readonly authService: AuthService,
     private readonly afs: AngularFirestore,
@@ -54,18 +55,6 @@ export class Tab3Page {
       switchMap(doc=>watchlistRef.update({list: [...doc.list.filter(m=>m.movieRef!==movieId), {movieRef: movieId}]}))
       )
     .subscribe()
-  }
-
-  async updatemovie(id: string): Promise<void> {
-    // const movieData: Partial<Movie> = {
-    //   text: "LOS MALI >:((((",
-    //   rated: 1
-    // }
-    // await this.moviesRef.doc(id).update(movieData);
-  }
-
-  async deletemovie(id: string): Promise<void> {
-    await this.moviesRef.doc(id).delete();
   }
 
 }
