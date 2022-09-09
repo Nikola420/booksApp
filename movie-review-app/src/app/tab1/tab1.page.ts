@@ -5,11 +5,11 @@ import { Component } from '@angular/core';
 import { AuthService } from '../core/auth/auth.service';
 
 // Firebase
-import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
+import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/compat/firestore';
 import firebase from 'firebase/compat/app';
 
 // Types etc
-import { map, Observable, take, tap } from 'rxjs';
+import { map, Observable, switchMap, take, tap } from 'rxjs';
 import { Movie } from '../shared/models/movie.model';
 @Component({
   selector: 'app-tab1',
@@ -17,7 +17,7 @@ import { Movie } from '../shared/models/movie.model';
   styleUrls: ['tab1.page.scss']
 })
 export class Tab1Page {
-  watchlistRef: AngularFirestoreCollection<any>;
+  watchlistRef: AngularFirestoreDocument;
   moviesRef: AngularFirestoreCollection<Movie>;
   movies: Observable<Movie>[] = [];
   currentUser: firebase.User;
@@ -25,7 +25,6 @@ export class Tab1Page {
     public readonly authService: AuthService,
     private readonly afs: AngularFirestore
   ) {
-    this.watchlistRef = afs.collection<any>('watchlist');
     this.moviesRef = afs.collection<Movie>('movies');
     this.authService.getCurrentUser()
     .pipe(
@@ -36,7 +35,8 @@ export class Tab1Page {
   }
 
   getWatchList(uid: string): void {
-    this.watchlistRef.doc(uid).valueChanges()
+    this.watchlistRef = this.afs.collection<any>('watchlist').doc<{list:{movieRef:string}[]}>(uid);
+    this.watchlistRef.valueChanges()
     .subscribe(
       (movies)=>{
         this.movies = [];
@@ -46,8 +46,17 @@ export class Tab1Page {
     )   
   }
 
+  removeFromWatchList(movieId: string): void {
+    this.watchlistRef.get()
+    .pipe(
+      map(doc=>doc.data()),
+      switchMap(doc=>this.watchlistRef.update({list: [...doc.list.filter(m=>m.movieRef!==movieId)]}))
+      )
+    .subscribe()
+  }
+
   getMovie(movieRef: string): Observable<Movie> {
-    return this.moviesRef.doc(movieRef).get().pipe(map(doc=>doc.data()));
+    return this.moviesRef.doc(movieRef).get().pipe(map(doc=>{return {id: movieRef, ...doc.data()}}));
   }
 
 }

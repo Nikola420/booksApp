@@ -9,7 +9,7 @@ import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/comp
 import firebase from 'firebase/compat/app';
 
 // Types etc
-import { Observable, take, of, map } from 'rxjs';
+import { Observable, take, of, map, switchMap, EMPTY } from 'rxjs';
 import { Movie } from '../shared/models/movie.model';
 
 @Component({
@@ -20,7 +20,6 @@ import { Movie } from '../shared/models/movie.model';
 export class Tab3Page {
   moviesRef: AngularFirestoreCollection<Movie>;
   movies: Observable<Movie>[];
-  watchlistRef: AngularFirestoreCollection<any>;
   currentUser: firebase.User;
   constructor(
     public readonly authService: AuthService,
@@ -47,17 +46,14 @@ export class Tab3Page {
     .subscribe(user=>this.currentUser=user);
   }
 
-  async addToWatchList(movieId: string, movieName: string): Promise<void> {
-    // const movieData: Movie = {
-    //   movieName: movieName,
-    //   movieRef: movieId,
-    //   ownerId: this.currentUser.uid,
-    //   owner: this.currentUser.displayName,
-    //   created: new Date(),
-    //   rated: 4,
-    //   text: "Dobar mali"
-    // }
-    // await this.moviesRef.add(movieData);
+  addToWatchList(movieId: string): void {
+    const watchlistRef = this.afs.collection<any>('watchlist').doc<{list:{movieRef:string}[]}>(this.currentUser.uid);
+    watchlistRef.get()
+    .pipe(
+      map(doc=>doc.data()),
+      switchMap(doc=>watchlistRef.update({list: [...doc.list.filter(m=>m.movieRef!==movieId), {movieRef: movieId}]}))
+      )
+    .subscribe()
   }
 
   async updatemovie(id: string): Promise<void> {

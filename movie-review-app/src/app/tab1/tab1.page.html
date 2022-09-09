@@ -9,15 +9,20 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Tab 1</ion-title>
+      <ion-title size="large">Watchlist</ion-title>
     </ion-toolbar>
   </ion-header>
 
   <div *ngIf="movies.length else emptyList">
-      <app-movie *ngFor="let movie of movies" [movieData]="movie" [mode]="'watchList'" ></app-movie>
+      <app-movie 
+        *ngFor="let movie of movies" 
+        [movieData]="movie" 
+        [mode]="'watchList'"
+        (removeFromWatchList$)="removeFromWatchList($event.id)"
+        ></app-movie>
   </div>
   <ng-template #emptyList>
-    <h1>You have nothing to watch.</h1>
+      <h1 style="text-align: center;" >You have nothing to watch.</h1>
   </ng-template>
 
 </ion-content>

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Movie } from '../models/movie.model';
 import { Observable } from 'rxjs';
 
@@ -10,6 +10,9 @@ import { Observable } from 'rxjs';
 export class MovieComponent {
   @Input() movieData: Observable<Movie>;
   @Input() mode: 'watchList' | 'browse';
+  @Output() review$ = new EventEmitter<null>();
+  @Output() addToWatchList$ = new EventEmitter<Movie>;
+  @Output() removeFromWatchList$ = new EventEmitter<Movie>;
   constructor() { }
 
 }
