@@ -9,7 +9,7 @@ import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/comp
 import firebase from 'firebase/compat/app';
 
 // Types etc
-import { Observable, take, of, map, switchMap } from 'rxjs';
+import { Observable, take, of, map, switchMap, catchError } from 'rxjs';
 import { Movie } from '../shared/models/movie.model';
 
 @Component({
@@ -52,9 +52,11 @@ export class Tab3Page {
     watchlistRef.get()
     .pipe(
       map(doc=>doc.data()),
-      switchMap(doc=>watchlistRef.update({list: [...doc.list.filter(m=>m.movieRef!==movieId), {movieRef: movieId}]}))
-      )
-    .subscribe()
+      switchMap(doc=>watchlistRef.set({list: [...doc.list.filter(m=>m.movieRef!==movieId), {movieRef: movieId}]}))
+    ) 
+    .subscribe({
+      error: async () => await watchlistRef.set({list: [{movieRef: movieId}]})
+      })
   }
 
 }
