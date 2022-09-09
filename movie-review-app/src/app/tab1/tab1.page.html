@@ -13,8 +13,11 @@
     </ion-toolbar>
   </ion-header>
 
-  <div *ngIf="authService.getCurrentUser() | async as user">
-    <pre>{{user | json}}</pre>
+  <div *ngIf="movies.length else emptyList">
+      <app-movie *ngFor="let movie of movies" [movieData]="movie" [mode]="'watchList'" ></app-movie>
   </div>
+  <ng-template #emptyList>
+    <h1>You have nothing to watch.</h1>
+  </ng-template>
 
 </ion-content>

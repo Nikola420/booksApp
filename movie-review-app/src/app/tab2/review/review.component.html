@@ -1,6 +1,7 @@
 <ion-card>
   <ion-card-header>
     <ion-card-title>Review by {{reviewData.owner}}</ion-card-title>
+    <ion-card-subtitle>{{reviewData.movieName}}</ion-card-subtitle>
   </ion-card-header>
   <ion-card-content>
     <div class="stars">
@@ -12,7 +13,7 @@
       {{reviewData.text}}
     </p>
     <div class="actions">
-      <ion-button (click)="viewMovie(reviewData.movie)" >View movie</ion-button>
+      <ion-button (click)="viewMovie(reviewData.movieRef)" >View movie</ion-button>
       <div *ngIf="isOwner" style="display: contents;">
         <ion-button (click)="updateEvent.emit(reviewData.id)">Update review</ion-button>
         <ion-button color="danger"  (click)="deleteEvent.emit(reviewData.id)" >Delete review</ion-button>

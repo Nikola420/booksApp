@@ -1,6 +1,7 @@
 export interface Review {
     id?: string;
-    movie: string;
+    movieName: string;
+    movieRef: string;
     created: Date;
     owner: string;
     ownerId: string;
