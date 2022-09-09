@@ -1,0 +1,31 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Browse latest movies
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Browse latest movies</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div *ngFor="let movie of movies; let index=index">
+    <app-movie 
+      [movieData]="movie" 
+      [mode]="'browse'" 
+      (addToWatchList$)="addToWatchList($event.id)"
+      (review$)="visibleReviewIndex=index"
+      >
+    </app-movie>
+    <app-create-review 
+      [movieData]="movie" 
+      [user]="currentUser"
+      [showing]="index==visibleReviewIndex"
+      ></app-create-review>
+  </div>
+
+</ion-content>

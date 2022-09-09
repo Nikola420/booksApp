@@ -1,0 +1,27 @@
+<ion-card *ngIf="showing" >
+  <ion-card-header>
+    <h1>Review of "{{movieName}}"</h1>
+  </ion-card-header>
+  <ion-card-content >
+    <form id="form" [formGroup]="reviewForm" (ngSubmit)="submit()" >
+      <div class="stars">
+        <h2>Rating: </h2>
+        <ion-icon style="color: var(--ion-color-warning);" *ngFor="let _ of [].constructor(5); let stars=index" (click)="rate(stars+1)" [name]="stars < reviewForm.value.rated ? 'star' : 'star-outline'"></ion-icon>
+        {{reviewForm.value.rated}}
+      </div>
+      <div>
+        <h2>Review: </h2>
+        <textarea
+          rows="5"
+          cols="50"
+          formControlName="text"
+          style="resize: none;"
+        ></textarea>
+      </div>
+      <div>
+        <ion-button type="submit" [disabled]="!reviewForm.valid" >Publish</ion-button>
+        <ion-button type="button" color="danger" (click)="cancel()">Cancel</ion-button>
+      </div>
+    </form>
+  </ion-card-content>
+</ion-card>

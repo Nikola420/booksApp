@@ -1,0 +1,20 @@
+<ion-card *ngIf="movieData | async as movie" >
+  <ion-card-header>
+    <ion-card-title>{{movie.name}}</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <p class="text">
+      {{movie.description}}
+    </p>
+    <div class="actions">
+      <ion-button *ngIf="mode==='browse'" color="light" [href]="movie.trailer" target="_blank" >
+        Watch trailer 
+        &nbsp; 
+        <ion-icon name="logo-youtube" style="color: var(--ion-color-danger)" ></ion-icon>
+      </ion-button>
+      <ion-button (click)="review$.emit(null)" >Review</ion-button>
+      <ion-button *ngIf="mode==='watchList'" color="danger" (click)="removeFromWatchList$.emit(movie)" >Remove from watchlist</ion-button>
+      <ion-button *ngIf="mode==='browse'" (click)="addToWatchList$.emit(movie)" >Add to watchlist</ion-button>
+    </div>
+  </ion-card-content>
+</ion-card>
