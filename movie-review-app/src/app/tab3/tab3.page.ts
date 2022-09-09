@@ -9,7 +9,7 @@ import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/comp
 import firebase from 'firebase/compat/app';
 
 // Types etc
-import { Observable, take, of, map, switchMap, EMPTY } from 'rxjs';
+import { Observable, take, of, map, switchMap } from 'rxjs';
 import { Movie } from '../shared/models/movie.model';
 
 @Component({

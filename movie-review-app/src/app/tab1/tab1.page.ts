@@ -21,6 +21,7 @@ export class Tab1Page {
   moviesRef: AngularFirestoreCollection<Movie>;
   movies: Observable<Movie>[] = [];
   currentUser: firebase.User;
+  visibleReviewIndex: number = -1;
   constructor(
     public readonly authService: AuthService,
     private readonly afs: AngularFirestore
