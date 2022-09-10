@@ -13,6 +13,7 @@
     </ion-toolbar>
   </ion-header>
 
+
   <div *ngIf="movies.length else emptyList">
     <div *ngFor="let movie of movies; let index = index">
       <app-movie 
@@ -23,11 +24,12 @@
       ></app-movie>
       <app-create-review 
         [movieData]="movie" 
-        [user]="currentUser"
         [showing]="index==visibleReviewIndex"
+        (submit$)="createReview($event)"
       ></app-create-review>
     </div> 
   </div>
+
   <ng-template #emptyList>
       <h1 style="text-align: center;" >You have nothing to watch.</h1>
   </ng-template>

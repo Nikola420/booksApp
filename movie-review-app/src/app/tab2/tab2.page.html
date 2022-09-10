@@ -13,14 +13,14 @@
     </ion-toolbar>
   </ion-header>
   
-  <div *ngIf="authService.getCurrentUser() | async as user" >
+<div *ngIf="currentUser" >
     <app-review 
-      *ngFor="let review of reviews | async"
-      [reviewData]="review" 
-      [isOwner]="user.uid === review.ownerId" 
-      (updateEvent)="updateReview($event)"
-      (deleteEvent)="deleteReview($event)"
-      ></app-review>
-  </div>
+    *ngFor="let review of reviews | async ; let index = index"
+    [reviewData]="review" 
+    [isOwner]="currentUser.uid === review.ownerId" 
+    (updateEvent)="visibleReviewFormIndex=index"
+    (deleteEvent)="deleteReview($event)"
+    ></app-review>
+</div>
 
 </ion-content>
