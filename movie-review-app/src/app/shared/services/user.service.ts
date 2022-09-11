@@ -92,8 +92,6 @@ export class UserService {
   }
 
   addReview(newReviewRef: string): void {
-    console.log("In add review.")
-    console.log(newReviewRef);
     this.userDocRef.get()
     .pipe(
       map(doc=>doc.data().reviews),
