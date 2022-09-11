@@ -23,9 +23,11 @@
         (review$)="visibleReviewIndex=index"
       ></app-movie>
       <app-create-review 
-        [movieData]="movie" 
+        [movieData]="movie"
+        [existingReviewData]="" 
         [showing]="index==visibleReviewIndex"
         (submit$)="createReview($event)"
+        (cancel$)="visibleReviewIndex=-1"
       ></app-create-review>
     </div> 
   </div>

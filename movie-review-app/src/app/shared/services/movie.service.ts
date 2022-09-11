@@ -27,6 +27,13 @@ export class MovieService {
     )
    }
 
+   getMovies(movieRefs: string[]): Observable<Movie>[] {
+    let out: Observable<Movie>[] = [];
+    for(let movieRef of movieRefs)
+      out.push(this.getMovie(movieRef))
+    return out;
+   }
+
    getAllMovies(): Observable<Movie[]> {
     return this.movieCollRef.valueChanges({idField: 'id'});
    }

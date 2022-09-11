@@ -19,7 +19,7 @@
         ></textarea>
       </div>
       <div>
-        <ion-button type="submit" [disabled]="!reviewForm.valid" >Publish</ion-button>
+        <ion-button type="submit" [disabled]="!reviewForm.valid" >{{existingReviewData ? "Update" : "Create"}}</ion-button>
         <ion-button type="button" color="danger" (click)="cancel()">Cancel</ion-button>
       </div>
     </form>

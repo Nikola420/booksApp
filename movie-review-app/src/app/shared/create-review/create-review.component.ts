@@ -1,8 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { Observable } from 'rxjs';
+import { Observable, take } from 'rxjs';
 import { AuthService } from '../../core/auth/auth.service';
 import { Movie } from '../models/movie.model';
 import { Review } from '../models/review.model';
@@ -14,21 +13,20 @@ import { Review } from '../models/review.model';
 })
 export class CreateReviewComponent implements OnInit {
   @Input() movieData: Observable<Movie>;
+  @Input() existingReviewData: Review | undefined;
   @Input() showing: boolean = false;
   @Output() submit$ = new EventEmitter<Review>();
+  @Output() cancel$ = new EventEmitter<null>();
   user: any; // firebase.User | null | undefined
   movieName: string;
   movieRef: string;
-  reviewsRef: AngularFirestoreCollection<Review>;
   reviewForm: FormGroup;
   constructor(
     private readonly fb: FormBuilder,
-    private readonly afs: AngularFirestore,
     private readonly authService: AuthService
   ) {
     this.authService.getCurrentUser()
     .subscribe(user=>this.user = user);
-    this.reviewsRef = afs.collection('reviews');
     this.reviewForm = fb.group({
       rated: [5, [
         Validators.required,
@@ -40,24 +38,41 @@ export class CreateReviewComponent implements OnInit {
         Validators.maxLength(10000)
       ]]
     });
+    if(this.existingReviewData)
+      this.reviewForm.setValue({rated: this.existingReviewData.rated, text: this.existingReviewData.text});
    }
 
    ngOnInit(): void {
-    this.movieData.subscribe(movie=>{
+    this.movieData
+    .pipe(
+      take(1)
+    )
+    .subscribe(movie=>{
       this.movieName = movie.name;
       this.movieRef = movie.id;
     })
    }
 
-   async submit(): Promise<void> {
+  submit(): void {
+    if(!this.existingReviewData)
     this.submit$.emit({
-        movieName: this.movieName,
-        movieRef: this.movieRef,
-        created: new Date(),
-        owner: this.user.displayName,
-        ownerId: this.user.uid,
-        ...this.reviewForm.value
-      })
+      movieName: this.movieName,
+      movieRef: this.movieRef,
+      created: new Date(),
+      owner: this.user.displayName,
+      ownerId: this.user.uid,
+      ...this.reviewForm.value
+    })
+    else 
+    this.submit$.emit({
+      id: this.existingReviewData.id,
+      movieName: this.movieName,
+      movieRef: this.movieRef,
+      created: this.existingReviewData.created,
+      owner: this.user.displayName,
+      ownerId: this.user.uid,
+      ...this.reviewForm.value
+    })
    }
 
    rate(stars: number): void {
@@ -66,6 +81,7 @@ export class CreateReviewComponent implements OnInit {
 
    cancel(): void {
     this.showing = false;
+    this.cancel$.emit(null);
    }
 
 }

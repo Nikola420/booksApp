@@ -1,15 +1,8 @@
 // Builtin
 import { Component } from '@angular/core';
 
-// Services
-import { AuthService } from '../core/auth/auth.service';
-
-// Firebase
-import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
-import firebase from 'firebase/compat/app';
-
 // Types etc
-import { Observable, take, of, map, switchMap, catchError, tap } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Movie } from '../shared/models/movie.model';
 import { MovieService } from '../shared/services/movie.service';
 import { UserService } from '../shared/services/user.service';

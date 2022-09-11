@@ -72,8 +72,8 @@ export class UserService {
       switchMap(
         watchlist=>this.userDocRef.update({
           watchlist: [
-            ...watchlist.filter(m=>m.movieRef!==movieRef), 
-            {movieRef: movieRef, watched: watched}
+            {movieRef: movieRef, watched: watched},
+            ...watchlist.filter(m=>m.movieRef!==movieRef)
           ]
         })),
         take(1)
@@ -92,13 +92,18 @@ export class UserService {
   }
 
   addReview(newReviewRef: string): void {
+    console.log("In add review.")
+    console.log(newReviewRef);
     this.userDocRef.get()
     .pipe(
       map(doc=>doc.data().reviews),
       switchMap(
-        reviews=>this.userDocRef.update({reviews: [...reviews, newReviewRef]})
-      )
-    )
+        reviews=>{
+          console.log(reviews);
+          return this.userDocRef.update({reviews: [newReviewRef,...reviews]});
+        }),
+        take(1)
+      ).subscribe()
   }
 
   removeReview(reviewRef: string): void {
