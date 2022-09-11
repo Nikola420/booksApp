@@ -96,10 +96,8 @@ export class UserService {
     .pipe(
       map(doc=>doc.data().reviews),
       switchMap(
-        reviews=>{
-          console.log(reviews);
-          return this.userDocRef.update({reviews: [newReviewRef,...reviews]});
-        }),
+        reviews=>this.userDocRef.update({reviews: [newReviewRef,...reviews]})
+        ),
         take(1)
       ).subscribe()
   }
