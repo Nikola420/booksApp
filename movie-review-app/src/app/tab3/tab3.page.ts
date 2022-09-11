@@ -40,7 +40,6 @@ export class Tab3Page {
 
   async createReview(reviewData: Review): Promise<void> {
     this.visibleReviewFormIndex = -1;
-    console.log(reviewData);
     const newReviewId = (await this.reviewService.createReview(reviewData)).id;
     this.userService.addReview(newReviewId);
   }
