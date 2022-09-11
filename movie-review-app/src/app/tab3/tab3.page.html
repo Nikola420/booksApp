@@ -18,14 +18,14 @@
       [movieData]="movie" 
       [mode]="'browse'" 
       (addToWatchList$)="addToWatchList($event.id)"
-      (review$)="visibleReviewIndex=index"
+      (review$)="visibleReviewFormIndex=index"
       >
     </app-movie>
-    <!-- <app-create-review 
+    <app-create-review 
       [movieData]="movie" 
-      [user]="currentUser"
-      [showing]="index==visibleReviewIndex"
-      ></app-create-review> -->
+      [showing]="index==visibleReviewFormIndex"
+      (submit$)="createReview($event)"
+      ></app-create-review>
   </div>
 
 </ion-content>

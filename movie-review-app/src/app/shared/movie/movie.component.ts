@@ -8,11 +8,17 @@ import { Observable } from 'rxjs';
   styleUrls: ['./movie.component.scss'],
 })
 export class MovieComponent {
+  @Input() watched: boolean;
   @Input() movieData: Observable<Movie>;
   @Input() mode: 'watchList' | 'browse';
+  @Output() markWatched$ = new EventEmitter<{movieRef:string, watched: boolean}>();
   @Output() review$ = new EventEmitter<null>();
   @Output() addToWatchList$ = new EventEmitter<Movie>;
   @Output() removeFromWatchList$ = new EventEmitter<Movie>;
   constructor() { }
+
+  markWatched(movieRef: string): void {
+    this.markWatched$.emit({movieRef: movieRef, watched: !this.watched});
+  }
 
 }

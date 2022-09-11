@@ -14,13 +14,21 @@
   </ion-header>
   
 <div *ngIf="currentUser" >
+  <div *ngFor="let review of reviews | async ; let index = index">
     <app-review 
-    *ngFor="let review of reviews | async ; let index = index"
     [reviewData]="review" 
     [isOwner]="currentUser.uid === review.ownerId" 
     (updateEvent)="visibleReviewFormIndex=index"
     (deleteEvent)="deleteReview($event)"
     ></app-review>
+    <app-create-review *ngIf="currentUser.uid === review.ownerId"
+    [movieData]="movies[index]"
+    [existingReviewData]="review" 
+    [showing]="index==visibleReviewFormIndex"
+    (submit$)="updateReview($event)"
+    (cancel$)="visibleReviewFormIndex=-1"
+  ></app-create-review>
+  </div>
 </div>
 
 </ion-content>

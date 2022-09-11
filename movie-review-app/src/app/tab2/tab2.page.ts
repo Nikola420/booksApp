@@ -7,8 +7,10 @@ import { UserService } from '../shared/services/user.service';
 import { AuthService } from '../core/auth/auth.service';
 
 // Types etc
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { Review } from '../shared/models/review.model';
+import { MovieService } from '../shared/services/movie.service';
+import { Movie } from '../shared/models/movie.model';
 
 @Component({
   selector: 'app-tab2',
@@ -17,19 +19,30 @@ import { Review } from '../shared/models/review.model';
 })
 export class Tab2Page {
   reviews: Observable<Review[]>;
+  movies: Observable<Movie>[] = [];
   currentUser: any; // So we avoid importing enitre firebase namespace for one type
   visibleReviewFormIndex: number = -1;
   constructor(
     private readonly userService: UserService,
     private readonly reviewService: ReviewService,
+    private readonly movieService: MovieService,
     private readonly authService: AuthService
   ){
     this.authService.getCurrentUser().subscribe(user=>this.currentUser=user);
-    this.reviews = this.reviewService.getAllReviews();
+    this.reviews = this.reviewService.getAllReviews()
+    .pipe(
+      tap(reviews=>this.movies=this.movieService.getMovies(reviews.map(r=>r.movieRef)))
+    )
   }
 
-  updateReview(reviewRef: string, reviewData: Review): void {
-    this.reviewService.createReview(reviewRef, reviewData);
+  getMovie(movieRef: string): Observable<Movie> {
+    return this.movieService.getMovie(movieRef);
+  }
+
+  updateReview(review: Review): void {
+    this.visibleReviewFormIndex = -1;
+    const {id, ...reviewData} = review;
+    this.reviewService.updateReview(id, reviewData);
   }
 
   deleteReview(reviewRef: string): void {

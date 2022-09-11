@@ -1,18 +1,15 @@
 // Builtin
 import { Component } from '@angular/core';
 
-// Services
-import { AuthService } from '../core/auth/auth.service';
-
-// Firebase
-import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
-import firebase from 'firebase/compat/app';
+// Reviews
+import { MovieService } from '../shared/services/movie.service';
+import { ReviewService } from '../shared/services/review.service';
+import { UserService } from '../shared/services/user.service';
 
 // Types etc
-import { Observable, take, of, map, switchMap, catchError, tap } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Movie } from '../shared/models/movie.model';
-import { MovieService } from '../shared/services/movie.service';
-import { UserService } from '../shared/services/user.service';
+import { Review } from '../shared/models/review.model';
 
 @Component({
   selector: 'app-tab3',
@@ -21,10 +18,11 @@ import { UserService } from '../shared/services/user.service';
 })
 export class Tab3Page {
   movies: Observable<Movie>[];
-  visibleReviewIndex: number = -1;
+  visibleReviewFormIndex: number = -1;
   constructor(
     private readonly movieService: MovieService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly reviewService: ReviewService
   ){
     movieService.getAllMovies()
     .subscribe(
@@ -38,6 +36,13 @@ export class Tab3Page {
 
   addToWatchList(movieRef: string): void {
     this.userService.addToWatchList(movieRef);
+  }
+
+  async createReview(reviewData: Review): Promise<void> {
+    this.visibleReviewFormIndex = -1;
+    console.log(reviewData);
+    const newReviewId = (await this.reviewService.createReview(reviewData)).id;
+    this.userService.addReview(newReviewId);
   }
 
 }

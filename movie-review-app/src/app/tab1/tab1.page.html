@@ -14,24 +14,20 @@
   </ion-header>
 
 
-  <div *ngIf="movies.length else emptyList">
-    <div *ngFor="let movie of movies; let index = index">
-      <app-movie 
-        [movieData]="movie" 
-        [mode]="'watchList'"
-        (removeFromWatchList$)="removeFromWatchList($event.id)"
-        (review$)="visibleReviewIndex=index"
-      ></app-movie>
-      <app-create-review 
-        [movieData]="movie" 
-        [showing]="index==visibleReviewIndex"
-        (submit$)="createReview($event)"
-      ></app-create-review>
-    </div> 
+<div *ngIf="userData | async as user" >
+  <div *ngFor="let movie of watchList; let index=index" >
+    <app-movie
+      [movieData]="movie"
+      [mode]="'watchList'"
+      [watched]="didWatch(user.watchlist, index)"
+      (removeFromWatchList$)="removeFromWatchList($event.id)"
+      (markWatched$)="markWatched($event.movieRef, $event.watched)"
+    ></app-movie>
   </div>
-
-  <ng-template #emptyList>
+  <div *ngIf="!watchList.length">
       <h1 style="text-align: center;" >You have nothing to watch.</h1>
-  </ng-template>
+  </div>
+</div>
+
 
 </ion-content>

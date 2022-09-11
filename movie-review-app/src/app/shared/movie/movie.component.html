@@ -6,15 +6,18 @@
     <p class="text">
       {{movie.description}}
     </p>
-    <div class="actions">
-      <ion-button *ngIf="mode==='browse'" color="light" [href]="movie.trailer" target="_blank" >
+    <div *ngIf="mode==='browse' else wl" class="actions">
+      <ion-button color="light" [href]="movie.trailer" target="_blank" >
         Watch trailer 
         &nbsp; 
         <ion-icon name="logo-youtube" style="color: var(--ion-color-danger)" ></ion-icon>
       </ion-button>
       <ion-button (click)="review$.emit(null)" >Review</ion-button>
-      <ion-button *ngIf="mode==='watchList'" color="danger" (click)="removeFromWatchList$.emit(movie)" >Remove from watchlist</ion-button>
-      <ion-button *ngIf="mode==='browse'" (click)="addToWatchList$.emit(movie)" >Add to watchlist</ion-button>
+      <ion-button (click)="addToWatchList$.emit(movie)" >Add to watchlist</ion-button>
     </div>
+    <ng-template #wl>
+      <ion-button (click)="markWatched(movie.id)" [color]="watched ? 'danger' : 'primary'" >{{ watched ? 'Unmark' : 'Mark watched'}}</ion-button>
+      <ion-button color="danger" (click)="removeFromWatchList$.emit(movie)" >Remove from watchlist</ion-button>
+    </ng-template>
   </ion-card-content>
 </ion-card>

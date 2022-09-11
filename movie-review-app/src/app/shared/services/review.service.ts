@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
-import { Observable } from 'rxjs';
+import { AngularFirestore, AngularFirestoreCollection, DocumentReference } from '@angular/fire/compat/firestore';
+import { map, Observable } from 'rxjs';
 import { AuthService } from '../../core/auth/auth.service';
 import { Review } from '../models/review.model';
 
@@ -23,8 +23,23 @@ export class ReviewService {
     return this.reviewCollRef.valueChanges({idField: 'id'});
   }
 
-  createReview(reviewRef: string, reviewData: Review): void {
-    this.reviewCollRef.doc<Review>(reviewRef).set(reviewData);
+  getUserReviews(reviewRefs: string[]): Observable<Review>[] {
+    let out: Observable<Review>[] = [];
+    for(let reviewRef of reviewRefs)
+      out.push(this.getReview(reviewRef));
+    return out;
+  }
+
+  getReview(reviewRef: string): Observable<Review> {
+    return this.reviewCollRef.doc<Review>(reviewRef).get().pipe(map(doc=>doc.data()))
+  }
+
+  async createReview(reviewData: Review): Promise<DocumentReference<Review>> {
+    return this.reviewCollRef.add(reviewData);
+  }
+
+  updateReview(reviewRef: string, reviewData: Review): void {
+    this.reviewCollRef.doc<Review>(reviewRef).update(reviewData);
   }
 
   deleteReview(reviewRef: string): void {
