@@ -6,7 +6,8 @@ import { UserService } from '../shared/services/user.service';
 import { MovieService } from '../shared/services/movie.service';
 
 // Types etc
-import { map, Observable, switchMap, tap } from 'rxjs';
+import { map, Observable, switchMap, take, tap } from 'rxjs';
+import { User } from '../shared/models/user.model';
 import { Movie } from '../shared/models/movie.model';
 import { Review } from '../shared/models/review.model';
 import { ReviewService } from '../shared/services/review.service';
@@ -15,31 +16,39 @@ import { ReviewService } from '../shared/services/review.service';
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss']
 })
-export class Tab1Page implements OnInit {
-  movies: Observable<Movie>[] = [];
+export class Tab1Page {
+  userData: Observable<User>;
+  watchList: Observable<Movie>[];
+  reviews: Observable<Review>[];
   currentUser: any; // firebase.User | null | undefined
   visibleReviewIndex: number = -1;
   constructor(
     private readonly userService: UserService,
-    private readonly movieService: MovieService,
-    private readonly reviewService: ReviewService
-  ) {}
-
-  ngOnInit(): void {
-    this.userService.getUserData()
+    public readonly movieService: MovieService,
+    public readonly reviewService: ReviewService
+  ) {
+    this.userData = this.userService.getUserData()
     .pipe(
       tap(user=>{
-          this.movies = this.movieService.getMovies(user.watchlist.map(m=>m.movieRef))
-      }),
-      switchMap(user=>this.reviewService.getUserReviews(user.reviews))
+        this.watchList = this.movieService.getMovies(user.watchlist.map(m=>m.movieRef));
+        this.reviews = this.reviewService.getUserReviews(user.reviews);
+      } 
+      )
     )
-    .subscribe()
   }
 
   async createReview(review: Review): Promise<void> {
     this.visibleReviewIndex = -1;
     const id = (await this.reviewService.createReview(review)).id;
     this.userService.addReview(id);
+  }
+
+  didWatch(watchList: User['watchlist'], index: number): boolean {
+    return watchList[index].watched;
+  }
+
+  markWatched(movieRef:string, watched: boolean): void {
+    this.userService.markWatched(movieRef, watched);
   }
 
   removeFromWatchList(movieRef: string): void {
